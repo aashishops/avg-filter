@@ -22,4 +22,4 @@ def upload():
 
     return jsonify({'image': img_data})
 
-handler = app  # for Vercel
+
