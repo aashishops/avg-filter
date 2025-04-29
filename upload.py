@@ -22,4 +22,5 @@ def upload():
 
     return jsonify({'image': img_data})
 
-
+if __name__ == '__main__':
+    app.run(debug=True)
