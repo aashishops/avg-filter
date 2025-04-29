@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical Image Processing</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Medical Image Processing with Averaging Filter</h1>
+
+    <input type="file" id="fileInput" accept="image/*">
+    <button onclick="uploadImage()">Upload & Filter</button>
+
+    <h2>Original Image</h2>
+    <img id="originalImage" style="display:none;" alt="Original">
+
+    <h2>Filtered Image</h2>
+    <img id="filteredImage" style="display:none;" alt="Filtered">
+  </div>
+
+  <script>
+    async function uploadImage() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please choose an image.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('originalImage').src = reader.result;
+        document.getElementById('originalImage').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (data.image) {
+          document.getElementById('filteredImage').src = `data:image/png;base64,${data.image}`;
+          document.getElementById('filteredImage').style.display = 'block';
+        } else {
+          alert('Processing failed.');
+        }
+      } catch (err) {
+        alert('Upload error: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
