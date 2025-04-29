@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from PIL import Image, ImageFilter
 from io import BytesIO
 import base64
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -11,6 +12,10 @@ def apply_averaging_filter(image_bytes):
     buffer = BytesIO()
     filtered.save(buffer, format='PNG')
     return base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
@@ -23,4 +28,4 @@ def upload():
     return jsonify({'image': img_data})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    serve(app, host='0.0.0.0', port=8000)
